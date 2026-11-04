@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JN SENSI</title>
+<style>
+:root{--p:#a100ff;--p2:#d000ff;--bg:#080510;--card:#160d22;--line:#48215e;--txt:#f5eaff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#29103c,#080510 55%);color:var(--txt);font:16px system-ui,Arial}
+header{text-align:center;padding:24px 16px 18px;background:linear-gradient(135deg,#210b37,#080510);border-bottom:1px solid var(--line)}
+.logo{font-size:clamp(34px,9vw,52px);font-weight:1000;font-style:italic;letter-spacing:2px;color:#fff;text-shadow:0 0 18px var(--p)}
+header p{margin:4px 0;color:#d9aaff;font-weight:700}
+main{max-width:720px;margin:auto;padding:16px}
+.card{background:linear-gradient(145deg,#1b1028,#100a18);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 8px 24px #0005}
+h2{font-size:18px;margin:0 0 14px;color:#e8c7ff}
+.row{display:grid;grid-template-columns:1fr 54px;gap:10px;align-items:center;margin:15px 0}
+label{font-weight:650}output{background:#090510;border:1px solid var(--line);border-radius:9px;padding:6px;text-align:center;color:#fff}
+input[type=range]{width:100%;accent-color:var(--p);display:block;margin-top:9px}
+select,button{font:inherit;border-radius:11px;border:1px solid var(--line);padding:11px;background:#21112f;color:white}
+button{cursor:pointer;font-weight:800;background:linear-gradient(120deg,#7600c9,#bd00ff);border:0}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.full{width:100%;margin-top:10px}
+.small{font-size:13px;color:#c5afd3;line-height:1.5}
+.status{min-height:22px;color:#dba7ff;font-size:14px;margin-top:8px}
+</style></head>
+<body>
+<header><div class="logo">♛ JN SENSI</div><p>SUA CONFIGURAÇÃO • SUA MIRA</p><p class="small">Free Fire • Configurações personalizáveis</p></header>
+<main>
+<section class="card">
+<h2>🎯 Sensibilidade</h2>
+<div class="row"><div><label for="geral">Geral</label><input id="geral" type="range" min="0" max="200" value="100"></div><output id="v-geral">100</output></div>
+<div class="row"><div><label for="red">Red Dot</label><input id="red" type="range" min="0" max="200" value="95"></div><output id="v-red">95</output></div>
+<div class="row"><div><label for="m2">Mira 2x</label><input id="m2" type="range" min="0" max="200" value="85"></div><output id="v-m2">85</output></div>
+<div class="row"><div><label for="m4">Mira 4x</label><input id="m4" type="range" min="0" max="200" value="75"></div><output id="v-m4">75</output></div>
+<div class="row"><div><label for="awm">AWM</label><input id="awm" type="range" min="0" max="200" value="50"></div><output id="v-awm">50</output></div>
+<div class="row"><div><label for="olho">Olhadinha</label><input id="olho" type="range" min="0" max="200" value="80"></div><output id="v-olho">80</output></div>
+</section>
+<section class="card">
+<h2>📱 Perfil do aparelho</h2>
+<label for="perfil">Preset inicial</label>
+<select id="perfil" class="full">
+<option value="custom">Personalizado</option><option value="low">Celular básico</option><option value="mid">Intermediário</option><option value="high">Alto desempenho</option>
+</select>
+<p class="small">Os presets são pontos de partida. Ajuste no treinamento conforme sua tela e estilo.</p>
+</section>
+<section class="card">
+<h2>⚙️ Ferramentas</h2>
+<div class="row"><label for="dpi">DPI (anotação opcional)</label><output id="v-dpi">420</output></div>
+<input id="dpi" type="range" min="320" max="800" value="420">
+<div class="row"><label for="fire">Tamanho do botão de tiro (%)</label><output id="v-fire">50</output></div>
+<input id="fire" type="range" min="20" max="100" value="50">
+<div class="buttons" style="margin-top:16px"><button id="copy">COPIAR CONFIG</button><button id="save">SALVAR</button></div>
+<button id="reset" class="full">RESTAURAR PADRÃO</button>
+<div id="status" class="status" role="status"></div>
+</section>
+<p class="small">JN SENSI é um configurador de sugestões. Ele não modifica o jogo automaticamente, não ativa auto-headshot e não oferece garantia contra punições. Aplique os valores manualmente nas configurações do jogo.</p>
+</main>
+<script>
+const ids=['geral','red','m2','m4','awm','olho','dpi','fire'];
+const defaults={geral:100,red:95,m2:85,m4:75,awm:50,olho:80,dpi:420,fire:50};
+const presets={low:{geral:170,red:160,m2:145,m4:130,awm:80,olho:150},mid:{geral:150,red:140,m2:125,m4:110,awm:65,olho:135},high:{geral:125,red:115,m2:100,m4:90,awm:55,olho:110}};
+function update(){ids.forEach(id=>document.getElementById('v-'+id).textContent=document.getElementById(id).value)}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',update));
+document.getElementById('perfil').addEventListener('change',e=>{let p=presets[e.target.value];if(p)Object.entries(p).forEach(([k,v])=>document.getElementById(k).value=v);update()});
+function config(){return Object.fromEntries(ids.map(id=>[id,document.getElementById(id).value]))}
+document.getElementById('save').onclick=()=>{try{localStorage.setItem('jn-sensi',JSON.stringify(config()));msg('Configuração salva neste aparelho!')}catch(e){msg('Não foi possível salvar neste navegador.')}};
+document.getElementById('copy').onclick=async()=>{let c=config();let s=`JN SENSI\\nGeral: ${c.geral}\\nRed Dot: ${c.red}\\nMira 2x: ${c.m2}\\nMira 4x: ${c.m4}\\nAWM: ${c.awm}\\nOlhadinha: ${c.olho}\\nDPI: ${c.dpi}\\nBotão de tiro: ${c.fire}%`;try{await navigator.clipboard.writeText(s);msg('Configuração copiada!')}catch(e){msg(s)}};
+document.getElementById('reset').onclick=()=>{Object.entries(defaults).forEach(([k,v])=>document.getElementById(k).value=v);document.getElementById('perfil').value='custom';update();msg('Valores padrão restaurados.')};
+function msg(t){document.getElementById('status').textContent=t}
+try{let saved=JSON.parse(localStorage.getItem('jn-sensi'));if(saved)ids.forEach(id=>{if(saved[id]!==undefined)document.getElementById(id).value=saved[id]})}catch(e){}
+update();
+</script></body></html>
